@@ -54,13 +54,31 @@ const getWordById = async (req, res) => {
 }
 
 const deleteWord = async (req, res) => {
-
+    const id = parseInt(req.params.myId);
+    try {
+        await database.deleteWordById(id);
+        res.status(204).send({});
+    } catch (err) {
+        res.status(404).send(err);
+    }
 };
+
+
 
 const updateWord = async (req, res) => {
-
+    const errors = validationResult(req);
+    const id = parseInt(req.params.myId);
+    if (!errors.isEmpty()) {
+        res.status(400).json({errors: errors.array()});
+    } else {
+        try {
+            const result = await database.updateWord(id, req.body);
+            res.status(200).json(result);
+        } catch (err) {
+            res.status(404).json(err);
+        }
+    }
 };
-
 // Get all words
 router.get('/', getAllWords);
 // Get word by id

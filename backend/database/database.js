@@ -82,9 +82,9 @@ const addWord = ({lang1, lang2, value1, value2}) => {
         pool.query(checkIfExists, [
             lang1, lang2, value1, value2,
             lang2, lang1, value2, value1
-        ], (error, results) => {
-            if (error) {
-                reject(error);
+        ], (err, results) => {
+            if (err) {
+                reject(err);
             } else {
                 if (results.length > 0) {
                     reject("Word already exists!");
@@ -93,7 +93,8 @@ const addWord = ({lang1, lang2, value1, value2}) => {
                         INSERT INTO words (lang1, value1, lang2, value2)
                         VALUES (?, ?, ?, ?)`;
                     pool.query(query, [lang1, value1, lang2, value2],
-                        (err, results) => err ? reject(error) : resolve("Word added!"));
+                        (err, results) =>
+                            err ? reject(err) : resolve("Word added!"));
                 }
             }
         });
@@ -102,16 +103,41 @@ const addWord = ({lang1, lang2, value1, value2}) => {
 
 const findWordById = (id) => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM words WHERE id = ?';
-        pool.query(query, [id], (err, result) => {
+        const query = 'SELECT * FROM words WHERE word_id = ?';
+        pool.query(query, [id], (err, result) =>
+            err ? reject(err) : resolve(result[0]));
+    });
+};
+
+
+const deleteWordById = (id) => {
+    return new Promise((resolve, reject) => {
+        const query = 'DELETE FROM words WHERE word_id = ?';
+        pool.query(query, [id], (err, result) => err
+            ? reject(err) : resolve());
+    });
+};
+
+const updateWord = (word_id, {lang1, lang2, value1, value2}) => {
+    return new Promise((resolve, reject) => {
+        const checkIfExists = `
+            UPDATE words
+            SET lang1  = ?,
+                value1 = ?,
+                lang2  = ?,
+                value2 = ?
+            WHERE word_id = ?`;
+        pool.query(checkIfExists, [lang1, value1, lang2, value2, word_id], (err, results) => {
             if (err) {
+                reject(err);
+            } else if (results.affectedRows === 0) {
                 reject("ID not found!");
             } else {
-                result.length === 0 ? reject('Word not found') : resolve(result[0]);
+                resolve("Word updated!");
             }
         });
     });
 };
 
 
-module.exports = {app, startApp, findAllWords, addWord, findWordById};
+module.exports = {app, startApp, findAllWords, addWord, findWordById, deleteWordById, updateWord};
