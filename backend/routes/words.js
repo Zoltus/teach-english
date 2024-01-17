@@ -21,8 +21,12 @@ const wordValidator = [
 ];
 
 const getAllWords = async (req, res) => {
-    const words = await database.findAllWords(req.query);
-    res.json(words);
+    try {
+        const words = await database.findAllWords(req.query);
+        res.status(200).json(words);
+    } catch (err) {
+        res.status(500).json(err.message);
+    }
 };
 
 const addWord = async (req, res) => {
@@ -34,9 +38,7 @@ const addWord = async (req, res) => {
             const newWord = await database.addWord(req.body);
             res.status(201).json(newWord);
         } catch (err) {
-            console.log(err.message)
             res.status(404).json(err.message);
-
         }
     }
 };
