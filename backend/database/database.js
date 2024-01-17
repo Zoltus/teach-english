@@ -87,18 +87,31 @@ const addWord = ({lang1, lang2, value1, value2}) => {
                 reject(error);
             } else {
                 if (results.length > 0) {
-                    reject({message: "Word already exists!"});
+                    reject("Word already exists!");
                 } else {
                     const query = `
                         INSERT INTO words (lang1, value1, lang2, value2)
                         VALUES (?, ?, ?, ?)`;
                     pool.query(query, [lang1, value1, lang2, value2],
-                        (err, results) =>  err ?  reject(error) :resolve({message: "Word added!"}));
+                        (err, results) => err ? reject(error) : resolve("Word added!"));
                 }
             }
         });
     });
 };
 
+const findWordById = (id) => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM words WHERE id = ?';
+        pool.query(query, [id], (err, result) => {
+            if (err) {
+                reject("ID not found!");
+            } else {
+                result.length === 0 ? reject('Word not found') : resolve(result[0]);
+            }
+        });
+    });
+};
 
-module.exports = {app, startApp, findAllWords, addWord};
+
+module.exports = {app, startApp, findAllWords, addWord, findWordById};

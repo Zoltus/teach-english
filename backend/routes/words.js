@@ -25,7 +25,7 @@ const getAllWords = async (req, res) => {
         const words = await database.findAllWords(req.query);
         res.status(200).json(words);
     } catch (err) {
-        res.status(500).json(err.message);
+        res.status(500).json(err);
     }
 };
 
@@ -38,13 +38,19 @@ const addWord = async (req, res) => {
             const newWord = await database.addWord(req.body);
             res.status(201).json(newWord);
         } catch (err) {
-            res.status(404).json(err.message);
+            res.status(404).json(err);
         }
     }
 };
 
 const getWordById = async (req, res) => {
-
+    const id = parseInt(req.params.myId);
+    try {
+        const word = await database.findWordById(id);
+        res.json(word);
+    } catch (err) {
+        res.status(404).send(err);
+    }
 }
 
 const deleteWord = async (req, res) => {
