@@ -21,16 +21,29 @@ const wordValidator = [
 ];
 
 const getAllWords = async (req, res) => {
+    const words = await database.findAllWords(req.query);
+    res.json(words);
+};
 
+const addWord = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(400).json({errors: errors.array()});
+    } else {
+        try {
+            const newWord = await database.addWord(req.body);
+            res.status(201).json(newWord);
+        } catch (err) {
+            console.log(err.message)
+            res.status(404).json(err.message);
+
+        }
+    }
 };
 
 const getWordById = async (req, res) => {
 
 }
-
-const addWord = async (req, res) => {
-
-};
 
 const deleteWord = async (req, res) => {
 

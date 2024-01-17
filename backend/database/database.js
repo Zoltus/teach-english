@@ -60,4 +60,55 @@ const gracefulShutdown = async () => {
 process.on('SIGTERM', gracefulShutdown); // Some other app requirest shutdown.
 process.on('SIGINT', gracefulShutdown); // ctrl-c
 
-module.exports = {app, startApp};
+const findAllWords = ({lang1, lang2}) => {
+    return new Promise((resolve, reject) => {
+        let query = `
+            SELECT *
+            FROM words
+            WHERE (lang1 = ? AND lang2 = ?)
+               OR (lang1 = ? AND lang2 = ?)`;
+        pool.query(query, [lang1, lang2, lang2, lang1], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+};
+
+const addWord = ({lang1, lang2, value1, value2}) => {
+    return new Promise((resolve, reject) => {
+        const checkIfExists = `
+            SELECT word_id
+            FROM words
+            WHERE (lang1 = ? AND lang2 = ? AND value1 = ? AND value2 = ?)
+               OR (lang1 = ? AND lang2 = ? AND value1 = ? AND value2 = ?)`;
+        pool.query(checkIfExists, [
+            lang1, lang2, value1, value2,
+            lang2, lang1, value2, value1
+        ], (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                if (results.length > 0) {
+                    reject({ message: "Word already exists!" });
+                } else {
+                    const query = `
+                        INSERT INTO words (lang1, value1, lang2, value2)
+                        VALUES (?, ?, ?, ?)`;
+                    pool.query(query, [lang1, value1, lang2, value2], (error, results) => {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve({ message: "Word added!" });
+                        }
+                    });
+                }
+            }
+        });
+    });
+};
+
+
+module.exports = {app, startApp, findAllWords, addWord};
