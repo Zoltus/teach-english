@@ -25,10 +25,9 @@ const exerciseValidator = [
     isValid('word_pairs.*.word2'),
 ];
 
-const findAllWords = async (req, res) => {
-    const id = parseInt(req.params.myId);
+const getAllExercises = async (req, res) => {
     try {
-        const words = await database.findAllWords(id);
+        const words = await database.getAllExercises();
         res.status(200).json(words);
     } catch (err) {
         res.status(500).json(err);
@@ -60,11 +59,11 @@ const addExercise = async (req, res) => {
     }
 };
 
-// Get all words
-router.get('/:myId', findAllWords);
-// Delete word by id
+// Get all exercices
+router.get('/', getAllExercises);
+// Delete exercice by id
 router.delete('/:myId', deleteExercise);
-// Add new word
+// Add new exercice
 router.post('/', exerciseValidator, addExercise);
 
 module.exports = router;
