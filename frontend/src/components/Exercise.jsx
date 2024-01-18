@@ -1,65 +1,39 @@
 import React, {useState} from "react";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import ExercisesPage from "./pages/ExercisesPage.jsx";
-import CreateExercicePage from "./pages/CreateExercicePage.jsx";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import HomeIcon from '@mui/icons-material/Home';
-import {Drawer, Link} from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
-import Database from "./Database.jsx";
+import {Button, Card, CardContent, Typography} from "@mui/material";
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
-function App() {
-    const [exercises, setExercises] = useState([]);
+function Exercise({exercise}) {
+    const [swapLang, setSwapLang] = useState(true);
 
-    const addExercise = async (exercise) => {
-        setExercises([...exercises, exercise]);
-        await Database.addExercice(exercise);
-    };
-
-    return <>
-        <BrowserRouter>
-            <div className={"flex"}>
-                <Drawer
-                    anchor="left"
-                    variant="permanent"
-                    sx={{
-                        width: 240,
-                        flexShrink: 0,
-                        '& .MuiDrawer-paper': {width: 240},
-                    }}
-                >
-                    <List>
-                        {[{text: 'Home', path: '/'},
-                            {text: 'AddExercise', path: '/CreateExercicePage'},
-                        ].map((item, index) => (
-                            <ListItem key={item.text} disablePadding>
-                                <ListItemButton component={Link} to={item.path}>
-                                    <ListItemIcon>
-                                        {index % 2 === 0 ? <HomeIcon/> : <AddIcon/>}
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.text}/>
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                </Drawer>
-                <div className={"flex-1 flex-grow-1"}>
-                    <div className="flex h-screen bg-gray-200">
-                        <main className="flex-1 p-4">
-                            <Routes>
-                                <Route path="/" element={<ExercisesPage exercises={exercises}/>}/>
-                                <Route path="/CreateExercicePage" element={<CreateExercicePage addExercise={addExercise}/>}/>
-                            </Routes>
-                        </main>
-                    </div>
+    const swapLanguage = () => setSwapLang(!swapLang);;
+    return (
+        <Card className="m-4">
+            <CardContent>
+                <Typography variant="h5" component="div" className="mb-4">
+                    {exercise.name}
+                </Typography>
+                <Typography color="textSecondary" gutterBottom>
+                    Category: {exercise.category}
+                </Typography>
+                <div className="flex justify-between items-center">
+                    <Typography color="textSecondary" gutterBottom>
+                        {swapLang ? exercise.lang1 : exercise.lang2}
+                        <SwapHorizIcon className="align-middle mx-4" onClick={swapLanguage}/>
+                        {swapLang ? exercise.lang2 : exercise.lang1}
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        className="ml-4 text-gray-500 border-gray-500 text-xs"
+                        onClick={swapLanguage}>Swap</Button>
                 </div>
-            </div>
-        </BrowserRouter>
-    </>
+                <Button
+                    variant="outlined"
+                    className="mt-5 text-gray-500 border-gray-500 text-xs">
+                    Study
+                </Button>
+            </CardContent>
+        </Card>
+    )
 }
 
-export default App;
+export default Exercise;
