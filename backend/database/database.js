@@ -19,6 +19,9 @@ const startApp = () => {
     pool.getConnection((err, con) => {
         con.release();
         // mysql connection
+        pool.on('error', function (err) {
+            console.log("[mysql error]", err);
+        });
         if (err) {
             console.error('Error connecting to MySQL:', err);
             process.exit(1);
@@ -60,84 +63,43 @@ const gracefulShutdown = async () => {
 process.on('SIGTERM', gracefulShutdown); // Some other app requirest shutdown.
 process.on('SIGINT', gracefulShutdown); // ctrl-c
 
-const findAllWords = ({lang1, lang2}) => {
+const findAllWords = (exercise_id) => {
     return new Promise((resolve, reject) => {
+        console.log("asd2")
         let query = `
             SELECT *
-            FROM words
-            WHERE (lang1 = ? AND lang2 = ?)
-               OR (lang1 = ? AND lang2 = ?)`;
-        pool.query(query, [lang1, lang2, lang2, lang1],
+            FROM word_pairs
+            WHERE exercise_id = ?`;
+        console.log("Finding word_pairs where exervie id", exercise_id)
+        pool.query(query, [exercise_id],
             (err, result) => err ? reject(err) : resolve(result));
     });
 };
 
-const addWord = ({lang1, lang2, value1, value2}) => {
+const addExercise = ({name, category, lang1, lang2, word_pairs}) => {
     return new Promise((resolve, reject) => {
-        const checkIfExists = `
-            SELECT word_id
-            FROM words
-            WHERE (lang1 = ? AND lang2 = ? AND value1 = ? AND value2 = ?)
-               OR (lang1 = ? AND lang2 = ? AND value1 = ? AND value2 = ?)`;
-        pool.query(checkIfExists, [
-            lang1, lang2, value1, value2,
-            lang2, lang1, value2, value1
-        ], (err, results) => {
+        const exerciseQuery = 'INSERT INTO exercises (name, category, lang1, lang2) VALUES (?, ?, ?, ?)';
+        pool.query(exerciseQuery, [name, category, lang1, lang2], (err, result) => {
             if (err) {
                 reject(err);
             } else {
-                if (results.length > 0) {
-                    reject("Word already exists!");
-                } else {
-                    const query = `
-                        INSERT INTO words (lang1, value1, lang2, value2)
-                        VALUES (?, ?, ?, ?)`;
-                    pool.query(query, [lang1, value1, lang2, value2],
-                        (err, results) =>
-                            err ? reject(err) : resolve("Word added!"));
-                }
+                const exerciseId = result.insertId;
+                const wordPairsQuery = 'INSERT INTO word_pairs (exercise_id, word1, word2) VALUES ?';
+                const wordPairsData = word_pairs.map(pair => [exerciseId, pair.word1, pair.word2]);
+                console.log("PairData: ", wordPairsData)
+                pool.query(wordPairsQuery, [wordPairsData], (err) =>
+                    err ? reject(err) : resolve(exerciseId));
             }
         });
     });
 };
 
-const findWordById = (id) => {
+const deleteExercise = (id) => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM words WHERE word_id = ?';
-        pool.query(query, [id], (err, result) =>
-            err ? reject(err) : resolve(result[0]));
-    });
-};
-
-
-const deleteWordById = (id) => {
-    return new Promise((resolve, reject) => {
-        const query = 'DELETE FROM words WHERE word_id = ?';
+        const query = 'DELETE FROM exercises WHERE exercise_id = ?';
         pool.query(query, [id], (err, result) => err
             ? reject(err) : resolve());
     });
 };
 
-const updateWord = (word_id, {lang1, lang2, value1, value2}) => {
-    return new Promise((resolve, reject) => {
-        const checkIfExists = `
-            UPDATE words
-            SET lang1  = ?,
-                value1 = ?,
-                lang2  = ?,
-                value2 = ?
-            WHERE word_id = ?`;
-        pool.query(checkIfExists, [lang1, value1, lang2, value2, word_id], (err, results) => {
-            if (err) {
-                reject(err);
-            } else if (results.affectedRows === 0) {
-                reject("ID not found!");
-            } else {
-                resolve("Word updated!");
-            }
-        });
-    });
-};
-
-
-module.exports = {app, startApp, findAllWords, addWord, findWordById, deleteWordById, updateWord};
+module.exports = {app, startApp, findAllWords, addExercise, deleteExercise};
