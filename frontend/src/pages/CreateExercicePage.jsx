@@ -1,9 +1,7 @@
 import React, {useState} from "react";
 import {Button, FormControl, TextField} from "@mui/material";
-import Database from "../Database.jsx";
 
-
-const CreatePage = () => {
+const CreateExercicePage = ({ addExercise }) => {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [lang1, setLang1] = useState('');
@@ -96,7 +94,7 @@ const CreatePage = () => {
         setLang1('');
         setLang2('');
         setWord_pairs([]);
-        await Database.addExercice(exercise);
+        addExercise(exercise);
         console.log("Submitted:", exercise);
     };
 
@@ -156,4 +154,4 @@ const CreatePage = () => {
     </div>
 }
 
-export default CreatePage
+export default CreateExercicePage

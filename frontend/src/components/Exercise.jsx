@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import ExercisesPage from "./pages/ExercisesPage.jsx";
 import CreateExercicePage from "./pages/CreateExercicePage.jsx";
@@ -7,10 +7,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import HomeIcon from '@mui/icons-material/Home';
 import {Drawer, Link} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import Database from "./Database.jsx";
-import SchoolIcon from '@mui/icons-material/School';
 
 function App() {
     const [exercises, setExercises] = useState([]);
@@ -20,17 +20,9 @@ function App() {
         await Database.addExercice(exercise);
     };
 
-    // Fetch data on mount
-    useEffect(() => {
-        (async () => {
-            const fetched = await Database.getAllExercices();
-            setExercises(fetched);
-        })();
-    }, []);
-
     return <>
         <BrowserRouter>
-            <div className="flex bg-gray-200">
+            <div className={"flex"}>
                 <Drawer
                     anchor="left"
                     variant="permanent"
@@ -38,15 +30,16 @@ function App() {
                         width: 240,
                         flexShrink: 0,
                         '& .MuiDrawer-paper': {width: 240},
-                    }}>
+                    }}
+                >
                     <List>
-                        {[{text: 'Exercises', path: '/'},
-                            {text: 'Add Exercise', path: '/CreateExercicePage'},
+                        {[{text: 'Home', path: '/'},
+                            {text: 'AddExercise', path: '/CreateExercicePage'},
                         ].map((item, index) => (
                             <ListItem key={item.text} disablePadding>
                                 <ListItemButton component={Link} to={item.path}>
                                     <ListItemIcon>
-                                        {index % 2 === 0 ? <SchoolIcon/> : <AddIcon/>}
+                                        {index % 2 === 0 ? <HomeIcon/> : <AddIcon/>}
                                     </ListItemIcon>
                                     <ListItemText primary={item.text}/>
                                 </ListItemButton>
@@ -54,13 +47,12 @@ function App() {
                         ))}
                     </List>
                 </Drawer>
-                <div className="flex-1 flex-grow-1 mx-16">
-                    <div className="flex h-screen">
+                <div className={"flex-1 flex-grow-1"}>
+                    <div className="flex h-screen bg-gray-200">
                         <main className="flex-1 p-4">
                             <Routes>
                                 <Route path="/" element={<ExercisesPage exercises={exercises}/>}/>
-                                <Route path="/CreateExercicePage"
-                                       element={<CreateExercicePage addExercise={addExercise}/>}/>
+                                <Route path="/CreateExercicePage" element={<CreateExercicePage addExercise={addExercise}/>}/>
                             </Routes>
                         </main>
                     </div>
