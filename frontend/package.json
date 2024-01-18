@@ -6,12 +6,22 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:app\" \"npm run dev:tailwind\"",
     "dev:app": "vite",
-    "dev:tailwind": "tailwindcss -i ./src/style/style.css -o ./dist/style.css --watch",
-    "build": "vite build",
+    "dev:tailwind": "tailwindcss -i src/App.css -o ./dist/App.css --watch",
+    "build": "concurrently \"vite build\" \"npm run dev:tailwind\"",
+    "buildd": "tailwindcss -i ./src/App.css -o ./dist/App.css --watch",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.5",
+    "@mui/material": "^5.15.5",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.12",
     "axios": "^1.6.2",
+    "react-router-dom": "^6.21.2",
+    "styled-components": "^6.1.8"
+  },
+  "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -15,7 +15,7 @@ COPY frontend/package*.json ./
 RUN npm install
 
 # Copy all frontend source code to the working directory
-# node_modules excluded (.dockerignore)
+# node_modules excluded (..dockerignore)
 COPY frontend .
 
 # Run the build script defined in package.json to build the frontend
