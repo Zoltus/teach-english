@@ -19,9 +19,6 @@ const startApp = () => {
     pool.getConnection((err, con) => {
         con.release();
         // mysql connection
-        pool.on('error', function (err) {
-            console.log("[mysql error]", err);
-        });
         if (err) {
             console.error('Error connecting to MySQL:', err);
             process.exit(1);
