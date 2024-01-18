@@ -1,31 +1,55 @@
-import React, {useState, useEffect} from "react";
-import axios from 'axios';
+import React from "react";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import HomeIcon from '@mui/icons-material/Home';
+import {Drawer, Link} from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
 
 function App() {
-    let [locations, setLocations] = useState([]);
-    const url = `${import.meta.env.VITE_API_URL}/api/locations`;
-
-    const fetch = async () => {
-        try {
-            const resp = await axios.get(url)
-            setLocations(resp.data);
-        } catch (err) {
-            console.error('Error:', err);
-            alert('Failed to load locations');
-        }
-    };
+    //const url = `${import.meta.env.VITE_API_URL}/api/locations`;
 
     return <>
-        <header>
-            <h1 className={"text-2xl"}>headerr</h1>
-        </header>
-        <div>
-            <h1>Locationss</h1>
+        <BrowserRouter>
+            <div className={"flex"}>
+                <Drawer
+                    anchor="left"
+                    variant="permanent"
+                    sx={{
+                        width: 240,
+                        flexShrink: 0,
+                        '& .MuiDrawer-paper': {width: 240},
+                    }}
+                >
+                    <List>
+                        {[{text: 'Home', path: '/'},
+                            {text: 'AddExercise', path: '/CreatePage'},
+                        ].map((item, index) => (
+                            <ListItem key={item.text} disablePadding>
+                                <ListItemButton component={Link} to={item.path}>
+                                    <ListItemIcon>
+                                        {index % 2 === 0 ? <HomeIcon/> : <AddIcon/>}
+                                    </ListItemIcon>
+                                    <ListItemText primary={item.text}/>
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Drawer>
+                <div className={"flex-1 flex-grow-1"}>
+                    <div className="flex h-screen bg-gray-200">
+                        <main className="flex-1 p-4">
+                            <Routes>
 
-        </div>
-        <div>
-
-        </div>
+                            </Routes>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </BrowserRouter>
     </>
 }
 
