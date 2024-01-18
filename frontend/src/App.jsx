@@ -46,7 +46,7 @@ function App() {
                         <main className="flex-1 p-4">
                             <Routes>
                                 <Route path="/" element={<HomePage/>}/>
-                                <Route path="/Home2" element={<CreatePage/>}/>
+                                <Route path="/CreatePage" element={<CreatePage/>}/>
                             </Routes>
                         </main>
                     </div>
