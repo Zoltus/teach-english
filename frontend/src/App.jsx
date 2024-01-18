@@ -1,5 +1,7 @@
 import React from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
+import HomePage from "./pages/HomePage.jsx";
+import CreatePage from "./pages/CreatePage.jsx";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -43,7 +45,8 @@ function App() {
                     <div className="flex h-screen bg-gray-200">
                         <main className="flex-1 p-4">
                             <Routes>
-
+                                <Route path="/" element={<HomePage/>}/>
+                                <Route path="/Home2" element={<CreatePage/>}/>
                             </Routes>
                         </main>
                     </div>
