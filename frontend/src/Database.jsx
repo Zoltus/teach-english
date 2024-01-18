@@ -1,59 +1,35 @@
-import React from "react";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import HomePage from "./pages/HomePage.jsx";
-import CreatePage from "./pages/CreatePage.jsx";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import HomeIcon from '@mui/icons-material/Home';
-import {Drawer, Link} from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import axios from "axios";
 
-function App() {
-    //const url = `${import.meta.env.VITE_API_URL}/api/locations`;
 
-    return <>
-        <BrowserRouter>
-            <div className={"flex"}>
-                <Drawer
-                    anchor="left"
-                    variant="permanent"
-                    sx={{
-                        width: 240,
-                        flexShrink: 0,
-                        '& .MuiDrawer-paper': {width: 240},
-                    }}
-                >
-                    <List>
-                        {[{text: 'Home', path: '/'},
-                            {text: 'AddExercise', path: '/CreatePage'},
-                        ].map((item, index) => (
-                            <ListItem key={item.text} disablePadding>
-                                <ListItemButton component={Link} to={item.path}>
-                                    <ListItemIcon>
-                                        {index % 2 === 0 ? <HomeIcon/> : <AddIcon/>}
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.text}/>
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                </Drawer>
-                <div className={"flex-1 flex-grow-1"}>
-                    <div className="flex h-screen bg-gray-200">
-                        <main className="flex-1 p-4">
-                            <Routes>
-                                <Route path="/" element={<HomePage/>}/>
-                                <Route path="/CreatePage" element={<CreatePage/>}/>
-                            </Routes>
-                        </main>
-                    </div>
-                </div>
-            </div>
-        </BrowserRouter>
-    </>
+//Adds exercise to db
+const addExercice = async (exercice) => {
+    try {
+        console.log("Trying to add: ", exercice)
+        const resp = await axios.post('http://localhost:3000/api/exercises', exercice);
+        return resp.data;
+    } catch (error) {
+        console.error('Error adding task: ', error);
+    }
+};
+
+//Removes exercise from db
+const removeExercise = async (id) => {
+    try {
+        const resp = await axios.delete(`http://localhost:3000/api/exercises/${id}`);
+        return resp.data;
+    } catch (error) {
+        console.error(`Error removing id: ${id}`, error);
+    }
+};
+
+//Fetches all exercices from db
+const getAllExercices = async () => {
+    try {
+        const response = await axios.get('http://localhost:3000/api/exercises');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data: ', error);
+    }
 }
 
-export default App;
+export default {addExercice, getAllExercices, removeExercise };
