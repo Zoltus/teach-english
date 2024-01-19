@@ -17,11 +17,6 @@ function App() {
     const [exercises, setExercises] = useState([]);
     const [currentExercise, setCurrentExercise] = useState();
 
-    const addExercise = async (exercise) => {
-        setExercises([...exercises, exercise]);
-        await Database.addExercise(exercise);
-    };
-
     // Fetch data on mount
     useEffect(() => {
         (async () => {
@@ -61,7 +56,7 @@ function App() {
                         <main className="flex-1 p-4">
                             <Routes>
                                 <Route path="/" element={<ExercisesPage exercises={exercises} setCurrentExercise={setCurrentExercise}/>}/>
-                                <Route path="/CreateExercisePage" element={<CreateExercisePage addExercise={addExercise}/>}/>
+                                <Route path="/CreateExercisePage" element={<CreateExercisePage exercises={exercises} setExercises={setExercises}/>}/>
                                 <Route path="/StudyPage" element={<StudyPage currentExercise={currentExercise} setCurrentExercise={setCurrentExercise}/>} />
                             </Routes>
                         </main>

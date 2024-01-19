@@ -1,18 +1,38 @@
 import React, {useState} from "react";
-import {Button, FormControl, TextField} from "@mui/material";
+import {Autocomplete, Button, FormControl, TextField} from "@mui/material";
+import Database from "../Database.jsx";
 
-const CreateExercisePage = ({addExercise}) => {
+const CreateExercisePage = ({exercises, setExercises}) => {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [lang1, setLang1] = useState('');
     const [lang2, setLang2] = useState('');
     const [word_pairs, setWord_pairs] = useState([]);
+    const [selectedExercise, setSelectedExercise] = useState(null);
+
+    const isEditing = () => selectedExercise != null
+        && selectedExercise.exercise_id !== null && selectedExercise.exercise_id !== -1;
+
+    //Get new highest id for new exercises
+    const getNewId = () => exercises.reduce((maxId, exercise) =>
+        exercise.exercise_id > maxId ? exercise.exercise_id : maxId, 0) + 1;
+
+    const addExercise = async (exercise) => {
+        setExercises((prevExercises) => [...prevExercises, exercise]);
+        await Database.addExercise(exercise);
+    };
+
+    const updateExercise = async (exercise) => {
+        if (selectedExercise) {
+            await Database.updateExercise(exercise);
+            console.log("Updated:", exercise);
+        }
+    };
 
     const actionButton = (index) => {
         const isLastButton = index === word_pairs.length - 1;
         const colors = isLastButton ? "text-green-500 border-green-500" : "text-red-500 border-red-500";
         const text = isLastButton ? "+ Add" : "- Remove";
-
 
         const handleActionClick = () => {
             if (isLastButton) {
@@ -81,7 +101,11 @@ const CreateExercisePage = ({addExercise}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const editing = isEditing();
+        console.log(exercises)
+        console.log("HighestId: ", getNewId());
         const exercise = {
+            exercise_id: editing ? selectedExercise.exercise_id : getNewId(),
             name,
             category,
             lang1,
@@ -94,14 +118,72 @@ const CreateExercisePage = ({addExercise}) => {
         setLang1('');
         setLang2('');
         setWord_pairs([]);
-        addExercise(exercise);
-        console.log("Submitted:", exercise);
+
+        if (editing) {
+            console.log("Was editing")
+            await updateExercise(exercise)
+            console.log("Updated:", exercise);
+        } else {
+            await addExercise(exercise);
+            console.log("Added:", exercise);
+        }
+
     };
+    //Empty option so you can add new if u select this:
+    const exerciseOptions = [
+        {label: 'ADD NEW', exercise_id: -1, data: null}, // Add the "None" option
+        ...exercises.map(exercise => ({
+            label: exercise.name,
+            exercise_id: exercise.exercise_id,
+            data: exercise
+        })),
+    ];
+
+    const handleAutocompleteChange = (event, value) => {
+        setSelectedExercise(value);
+        if (value && value.exercise_id !== -1) {
+            setName(value.label);
+            setCategory(value.data.category);
+            setLang1(value.data.lang1);
+            setLang2(value.data.lang2);
+            setWord_pairs(value.data.word_pairs);
+        } else {
+            setName("");
+            setCategory("");
+            setLang1("");
+            setLang2("");
+            setWord_pairs([]);
+        }
+        console.log('Selected Option:', value);
+    };
+
+    const AddEditButton = () => {
+        const text = isEditing() ? "Update Exercise" : "Add Exercise";
+        return (
+            <Button className="mt-4 text-gray-500 border-gray-500"
+                    variant="outlined"
+                    type="submit">
+                {text}
+            </Button>
+        )
+    }
 
     return (
         <div>
-            <h1>Create exercise</h1>
+            <h1 className="text-gray-500">Create exercise</h1>
             <FormControl component="form" onSubmit={handleSubmit}>
+                <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={exerciseOptions}
+                    onChange={handleAutocompleteChange}
+                    isOptionEqualToValue={
+                        (option, value) => option.exercise_id === value.exercise_id
+                    }
+                    getOptionLabel={(option) => option.label}
+                    renderInput={(params) =>
+                        <TextField className="bg-perfect-gray" {...params} label="Movie"/>}
+                />
                 <div className="">
                     <TextField
                         required
@@ -111,6 +193,7 @@ const CreateExercisePage = ({addExercise}) => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         fullWidth
+                        className="mt-6"
                     />
                     <TextField
                         id="category"
@@ -119,6 +202,7 @@ const CreateExercisePage = ({addExercise}) => {
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                         fullWidth
+                        className="mt-6"
                     />
                 </div>
                 <div className="flex mt-6 space-x-4">
@@ -144,12 +228,14 @@ const CreateExercisePage = ({addExercise}) => {
                 <div className="mt-4">
                     {addWords()}
                 </div>
-                <Button className="mt-4 text-gray-500 border-gray-500"
-                        variant="outlined"
-                        type="submit"
-                >
-                    Create Exercise
-                </Button>
+                {AddEditButton()}
+                {isEditing() && (
+                    <Button className="mt-4 text-red-500 border-red-500"
+                            variant="outlined"
+                            type="submit">
+                        Delete Exercise
+                    </Button>
+                )}
             </FormControl>
         </div>
     )
