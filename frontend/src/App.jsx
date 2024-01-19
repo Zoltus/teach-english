@@ -42,7 +42,7 @@ function App() {
                         '& .MuiDrawer-paper': {width: 240},
                     }}>
                     <List>
-                        {[{text: 'Exercises', path: 'a'},
+                        {[{text: 'Exercises', path: '/'},
                             {text: 'Add Exercise', path: '/CreateExercisePage'},
                         ].map((item, index) => (
                             <ListItem key={item.text} disablePadding>
