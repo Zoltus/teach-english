@@ -1,9 +1,11 @@
 import React, {useState} from "react";
 import {Button, Card, CardContent, Typography} from "@mui/material";
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import {useNavigate} from "react-router-dom";
 
 function Exercise({exercise, setCurrentExercise}) {
     const [swapLang, setSwapLang] = useState(true);
+    const navigate = useNavigate();
 
     const swapLanguage = () => setSwapLang(!swapLang);
     const study = () => {
