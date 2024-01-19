@@ -86,7 +86,10 @@ const StudyPage = ({currentExercise, setCurrentExercise}) => {
         <div className="flex flex-col items-center mt-8">
             <h1 className="text-2xl font-bold mb-4">Study Page</h1>
             {words()}
-            <Button variant="contained" color="primary" className="mt-6" onClick={handleSubmit}>
+            <Button color="primary"
+                    variant="outlined"
+                    className="mt-5 text-gray-500 border-gray-500 text-xs"
+                    onClick={handleSubmit}>
                 Submit
             </Button>
             {openModal && (
@@ -97,8 +100,8 @@ const StudyPage = ({currentExercise, setCurrentExercise}) => {
                         <Button
                             onClick={handleCloseModal}
                             color="primary"
-                            variant="contained"
-                            className="bg-red-500 text-white px-4 py-2 rounded mt-4"
+                            variant="outlined"
+                            className="mt-5 text-gray-500 border-gray-500 text-xs"
                         >
                             OK
                         </Button>

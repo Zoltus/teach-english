@@ -31,10 +31,10 @@ function Exercise({exercise, setCurrentExercise}) {
         //Set swapLang to exercise so we know if we should swap languages.
         exercise.swapLang = swapLang;
         setCurrentExercise(exercise);
-        navigate("/StudyPage");
+        navigate("/study");
     };
     return (
-        <Card className="m-4">
+        <Card className="">
             <CardContent>
                 <Typography variant="h5" component="div" className="mb-4">
                     {exercise.name}

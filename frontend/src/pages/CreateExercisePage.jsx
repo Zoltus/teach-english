@@ -143,7 +143,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
                         <TextField
                             required
                             id="word1"
-                            label="word1"
+                            label="Word"
                             variant="filled"
                             value={pair.word1}
                             onChange={(e) => handleWordChange(index, 'word1', e.target.value)}
@@ -154,7 +154,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
                         <TextField
                             required
                             id="word2"
-                            label="word2"
+                            label="Translation"
                             variant="filled"
                             value={pair.word2}
                             onChange={(e) => handleWordChange(index, 'word2', e.target.value)}
@@ -282,7 +282,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
                     <TextField
                         required
                         id="lang1"
-                        label="lang1"
+                        label="From language"
                         variant="filled"
                         value={lang1}
                         onChange={(e) => setLang1(e.target.value)}
@@ -291,7 +291,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
                     <TextField
                         required
                         id="lang2"
-                        label="lang2"
+                        label="To Language"
                         variant="filled"
                         value={lang2}
                         onChange={(e) => setLang2(e.target.value)}
