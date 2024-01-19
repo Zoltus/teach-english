@@ -62,11 +62,11 @@ process.on('SIGINT', gracefulShutdown); // ctrl-c
 
 const getAllExercises = () => {
     return new Promise((resolve, reject) => {
-        let query = `
+        let selectQuery = `
             SELECT *
             FROM exercises
                      LEFT JOIN word_pairs ON exercises.exercise_id = word_pairs.exercise_id`;
-        pool.query(query, (err, result) => {
+        pool.query(selectQuery, (err, result) => {
             if (err) {
                 reject(err)
             } else {
@@ -103,28 +103,52 @@ const getAllExercises = () => {
 
 const addExercise = ({name, category, lang1, lang2, word_pairs}) => {
     return new Promise((resolve, reject) => {
-        const exerciseQuery = 'INSERT INTO exercises (name, category, lang1, lang2) VALUES (?, ?, ?, ?)';
-        pool.query(exerciseQuery, [name, category, lang1, lang2], (err, result) => {
+        const insertExerciseQuery = 'INSERT INTO exercises (name, category, lang1, lang2) VALUES (?, ?, ?, ?)';
+        pool.query(insertExerciseQuery, [name, category, lang1, lang2], (err, result) => {
             if (err) {
                 reject(err);
             } else {
                 const exerciseId = result.insertId;
-                const wordPairsQuery = 'INSERT INTO word_pairs (exercise_id, word1, word2) VALUES ?';
+                const insertQuery = 'INSERT INTO word_pairs (exercise_id, word1, word2) VALUES ?';
                 const wordPairsData = word_pairs.map(pair => [exerciseId, pair.word1, pair.word2]);
                 console.log("PairData: ", wordPairsData)
-                pool.query(wordPairsQuery, [wordPairsData], (err) =>
-                    err ? reject(err) : resolve(exerciseId));
+                pool.query(insertQuery, [wordPairsData], (err) => err ? reject(err) : resolve(exerciseId));
             }
         });
     });
 };
 
-const deleteExercise = (id) => {
+const updateExercise = (id, {name, category, lang1, lang2, word_pairs}) => {
     return new Promise((resolve, reject) => {
-        const query = 'DELETE FROM exercises WHERE exercise_id = ?';
-        pool.query(query, [id], (err, result) => err
-            ? reject(err) : resolve());
+        const updateQuery = 'UPDATE exercises SET name=?, category=?, lang1=?, lang2=? WHERE exercise_id=?';
+        // Update exercise info
+        pool.query(updateQuery, [name, category, lang1, lang2, id], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                // Delete existing word pairs
+                const deleteQuery = 'DELETE FROM word_pairs WHERE exercise_id=?';
+                pool.query(deleteQuery, [id], (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        // Insert new word pairs for the exercise
+                        const insertQuery = 'INSERT INTO word_pairs (exercise_id, word1, word2) VALUES ?';
+                        const pair_data = word_pairs.map(pair => [id, pair.word1, pair.word2]);
+                        pool.query(insertQuery, [pair_data], (err) => err ? reject(err) : resolve(id));
+                    }
+                });
+            }
+        });
     });
 };
 
-module.exports = {app, startApp, getAllExercises, addExercise, deleteExercise};
+
+const deleteExercise = (id) => {
+    return new Promise((resolve, reject) => {
+        const deleteQuery = 'DELETE FROM exercises WHERE exercise_id = ?';
+        pool.query(deleteQuery, [id], (err, result) => err ? reject(err) : resolve());
+    });
+};
+
+module.exports = {app, startApp, getAllExercises, addExercise, deleteExercise, updateExercise};

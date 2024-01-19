@@ -60,11 +60,31 @@ const addExercise = async (req, res) => {
     }
 };
 
+const updateExercise = async (req, res) => {
+    const id = parseInt(req.params.myId);
+    console.log("body;", req.body);
+    console.log("id: ", id)
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+    try {
+        await database.updateExercise(id, req.body);
+        res.status(204).send({});
+    } catch (error) {
+        console.error('Error adding exercise:', error.message);
+        res.status(500).json({error: 'Internal Server Error'});
+    }
+};
+
 // Get all Exercises
 router.get('/', getAllExercises);
 // Delete Exercise by id
 router.delete('/:myId', deleteExercise);
 // Add new Exercise
 router.post('/', exerciseValidator, addExercise);
+// Update exercise
+router.patch('/:myId', exerciseValidator, updateExercise);
 
 module.exports = router;
