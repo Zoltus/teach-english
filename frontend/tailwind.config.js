@@ -3,7 +3,14 @@ export default {
   content: ["./src/**/*.{html,jsx}"],
   important: '#root',
   theme: {
-    extend: {},
+    extend: {
+      backgroundColor: {
+        'perfect-gray': '#D8D9DD',
+      },
+      textColor: {
+        'perfect-gray': '#D8D9DD',
+      },
+    },
   },
   plugins: [],
   corePlugins: {
