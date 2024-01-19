@@ -6,6 +6,9 @@ require('dotenv').config();
 
 let server = undefined;
 
+/**
+ * Database connection pool.
+ */
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -14,6 +17,9 @@ const pool = mysql.createPool({
     connectionLimit: 10,
 });
 
+/**
+ * Start the application. First tests connection then initializes the server.
+ */
 const startApp = () => {
     //Test connection
     pool.getConnection((err, con) => {
@@ -30,6 +36,9 @@ const startApp = () => {
     });
 };
 
+/**
+ * Start the server listening port.
+ */
 const listenApp = () => {
     server = app
         .listen(port, () => console.log(`Server listening on port ${port}`))
@@ -39,6 +48,9 @@ const listenApp = () => {
         });
 };
 
+/**
+ * Gracefully shutdown the server and close the database connection.
+ */
 const gracefulShutdown = async () => {
     try {
         console.log('Starting graceful shutdown...');
@@ -60,6 +72,14 @@ const gracefulShutdown = async () => {
 process.on('SIGTERM', gracefulShutdown); // Some other app requirest shutdown.
 process.on('SIGINT', gracefulShutdown); // ctrl-c
 
+/**
+ * Get all exercises from the database.
+ *
+ * Finds all exercises and then does another query to wind all words for them
+ * then it strips down duplicate/useless data and makes array from the word_pairs.
+ *
+ * @returns {Promise} Containing all Exercises.
+ */
 const getAllExercises = () => {
     return new Promise((resolve, reject) => {
         let selectQuery = `
@@ -70,6 +90,7 @@ const getAllExercises = () => {
             if (err) {
                 reject(err)
             } else {
+                //Map for unique exercises
                 const Exercises = new Map();
                 result.forEach(item => {
                     const exerciseId = item.exercise_id;
@@ -101,6 +122,14 @@ const getAllExercises = () => {
     });
 };
 
+/**
+ * Add a new exercise to the database.
+ *
+ * First incerts exercise and if successfull it inserts all words to word_pairs table.
+ *
+ * @param {Object} exerciseData - Destructed data for new exercise.
+ * @returns {Promise<number>} Promise with the newly added id.
+ */
 const addExercise = ({name, category, lang1, lang2, word_pairs}) => {
     return new Promise((resolve, reject) => {
         const insertExerciseQuery = 'INSERT INTO exercises (name, category, lang1, lang2) VALUES (?, ?, ?, ?)';
@@ -117,6 +146,12 @@ const addExercise = ({name, category, lang1, lang2, word_pairs}) => {
     });
 };
 
+/**
+ * Update an existing exercise in the database.
+ * @param {number} id - of the exercise to update.
+ * @param {Object} exerciseData - New data for the exercise to update destructed.
+ * @returns {Promise<number>} Promise with the id updated.
+ */
 const updateExercise = (id, {name, category, lang1, lang2, word_pairs}) => {
     return new Promise((resolve, reject) => {
         const updateQuery = 'UPDATE exercises SET name=?, category=?, lang1=?, lang2=? WHERE exercise_id=?';
@@ -142,7 +177,11 @@ const updateExercise = (id, {name, category, lang1, lang2, word_pairs}) => {
     });
 };
 
-
+/**
+ * Deletes an exercise from the database.
+ *
+ * @param {number} id - of the exercise to delete.
+ */
 const deleteExercise = (id) => {
     return new Promise((resolve, reject) => {
         const deleteQuery = 'DELETE FROM exercises WHERE exercise_id = ?';

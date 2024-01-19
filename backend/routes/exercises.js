@@ -3,7 +3,11 @@ const express = require('express');
 const router = express.Router();
 const {body, validationResult} = require('express-validator');
 
-// Helper method to check validation
+/**
+ * Helper method to check if a field is valid.
+ * @param {string} field - Name of the field.
+ * @returns validation.
+ */
 const isValid = (field) => [
     body(field)
         .notEmpty()
@@ -12,7 +16,9 @@ const isValid = (field) => [
         .withMessage(`${field} must be a string!`),
 ];
 
-//Validator for adding exercises
+/**
+ * Validators for adding exercises.
+ */
 const exerciseValidator = [
     isValid('name'),
     isValid('category'),
@@ -25,6 +31,11 @@ const exerciseValidator = [
     isValid('word_pairs.*.word2'),
 ];
 
+/**
+ * Get all exercises.
+ * @param {Request} req - Rrequest object.
+ * @param {Response} res - Response object.
+ */
 const getAllExercises = async (req, res) => {
     try {
         const words = await database.getAllExercises();
@@ -35,6 +46,11 @@ const getAllExercises = async (req, res) => {
     }
 };
 
+/**
+ * Delete Exercise based on the id.
+ * @param {Request} req - Containing id to delete.
+ * @param {Response} res - Response object.
+ */
 const deleteExercise = async (req, res) => {
     const id = parseInt(req.params.myId);
     try {
@@ -46,6 +62,11 @@ const deleteExercise = async (req, res) => {
     }
 };
 
+/**
+ * Add new exercise to new id.
+ * @param {Request} req - Containing new exercise data.
+ * @param {Response} res - Response of the new id added.
+ */
 const addExercise = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -60,6 +81,11 @@ const addExercise = async (req, res) => {
     }
 };
 
+/**
+ * Update exercise based on id.
+ * @param {Request} req - Request containing id to update and new values.
+ * @param {Response} res - Response status
+ */
 const updateExercise = async (req, res) => {
     const id = parseInt(req.params.myId);
     const errors = validationResult(req);
