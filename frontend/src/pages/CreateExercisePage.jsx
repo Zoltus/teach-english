@@ -239,79 +239,82 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         )
     }
     return (
-        <div>
-            <h1 className="text-gray-500">Create exercise</h1>
-            <FormControl component="form" onSubmit={handleSubmit}>
-                <Autocomplete
-                    disablePortal
-                    freeSolo
-                    id="suggestions"
-                    value={selectedExercise}
-                    options={exerciseOptions}
-                    onChange={handleAutocompleteChange}
-                    getOptionKey={(option) => option.exercise_id}
-                    isOptionEqualToValue={
-                        (option, value) => option.exercise_id === value.exercise_id
-                    }
-                    getOptionLabel={(option) => option.label}
-                    renderInput={(params) =>
-                        <TextField className="bg-perfect-gray" {...params} label="Select to edit or Add new!"/>}
-                />
-                <div className="">
-                    <TextField
-                        required
-                        id="name"
-                        label="Name"
-                        variant="filled"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        fullWidth
-                        className="mt-6"
+        <>
+            <div className="flex flex-col items-center mt-8">
+                <h1 className="text-2xl font-bold mb-4">Add/Edit/Delete exercises</h1>
+                <FormControl component="form" onSubmit={handleSubmit}>
+                    <Autocomplete
+                        disablePortal
+                        freeSolo
+                        id="suggestions"
+                        value={selectedExercise}
+                        options={exerciseOptions}
+                        onChange={handleAutocompleteChange}
+                        getOptionKey={(option) => option.exercise_id}
+                        isOptionEqualToValue={
+                            (option, value) => option.exercise_id === value.exercise_id
+                        }
+                        getOptionLabel={(option) => option.label}
+                        renderInput={(params) =>
+                            <TextField className="bg-perfect-gray" {...params} label="Select to edit or Add new!"/>}
                     />
-                    <TextField
-                        id="category"
-                        label="Category"
-                        variant="filled"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        fullWidth
-                        className="mt-6"
-                    />
-                </div>
-                <div className="flex mt-6 space-x-4">
-                    <TextField
-                        required
-                        id="lang1"
-                        label="From language"
-                        variant="filled"
-                        value={lang1}
-                        onChange={(e) => setLang1(e.target.value)}
-                        fullWidth
-                    />
-                    <TextField
-                        required
-                        id="lang2"
-                        label="To Language"
-                        variant="filled"
-                        value={lang2}
-                        onChange={(e) => setLang2(e.target.value)}
-                        fullWidth
-                    />
-                </div>
-                <div className="mt-4">
-                    {addWords()}
-                </div>
-                {AddEditButton()}
-                {isEditing() && (
-                    <Button className="mt-4 text-red-500 border-red-500"
-                            variant="outlined"
-                            onClick={deleteExercise}
-                    >
-                        Delete Exercise
-                    </Button>
-                )}
-            </FormControl>
-        </div>
+                    <div className="">
+                        <TextField
+                            required
+                            id="name"
+                            label="Name"
+                            variant="filled"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            fullWidth
+                            className="mt-6"
+                        />
+                        <TextField
+                            id="category"
+                            label="Category"
+                            variant="filled"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            fullWidth
+                            className="mt-6"
+                        />
+                    </div>
+                    <div className="flex mt-6 space-x-4">
+                        <TextField
+                            required
+                            id="lang1"
+                            label="From language"
+                            variant="filled"
+                            value={lang1}
+                            onChange={(e) => setLang1(e.target.value)}
+                            fullWidth
+                        />
+                        <TextField
+                            required
+                            id="lang2"
+                            label="To Language"
+                            variant="filled"
+                            value={lang2}
+                            onChange={(e) => setLang2(e.target.value)}
+                            fullWidth
+                        />
+                    </div>
+                    <div className="mt-4">
+                        {addWords()}
+                    </div>
+                    {AddEditButton()}
+                    {isEditing() && (
+                        <Button className="mt-4 text-red-500 border-red-500"
+                                variant="outlined"
+                                onClick={deleteExercise}
+                        >
+                            Delete Exercise
+                        </Button>
+                    )}
+                </FormControl>
+            </div>
+        </>
+
     )
 }
 
