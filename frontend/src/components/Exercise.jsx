@@ -13,7 +13,6 @@ function Exercise({exercise, setCurrentExercise}) {
         exercise.swapLang = swapLang;
         setCurrentExercise(exercise);
         navigate("/StudyPage");
-        console.log("Studying ", exercise)
     };
 
     return (

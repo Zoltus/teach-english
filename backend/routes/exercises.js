@@ -62,9 +62,6 @@ const addExercise = async (req, res) => {
 
 const updateExercise = async (req, res) => {
     const id = parseInt(req.params.myId);
-    console.log("body;", req.body);
-    console.log("id: ", id)
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});

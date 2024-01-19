@@ -8,7 +8,6 @@ const LoginPage = ({setIsAuthenticated}) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log("Loginsubmit")
         const result = await Database.auth({ name, password })
         const login = result.login;
         if (login) {

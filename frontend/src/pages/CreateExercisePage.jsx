@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Autocomplete, Button, FormControl, TextField} from "@mui/material";
 import Database from "../Database.jsx";
+import exercise from "../components/Exercise.jsx";
 
 const CreateExercisePage = ({exercises, setExercises}) => {
     const [name, setName] = useState('');
@@ -19,7 +20,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
 
     //Empty option so you can add new if u select this:
     const exerciseOptions = [
-        {exercise_id: -1, label: 'ADD NEW', data: null}, // Add the "None" option
+        {exercise_id: -1, label: 'ADD NEW', data: null},
         ...exercises.map(exercise => ({
             exercise_id: exercise.exercise_id,
             label: exercise.name,
@@ -35,7 +36,6 @@ const CreateExercisePage = ({exercises, setExercises}) => {
     const updateExercise = async (exercise) => {
         if (selectedExercise) {
             await Database.updateExercise(exercise);
-            console.log("Updated:", exercise);
         }
     };
 
@@ -129,8 +129,6 @@ const CreateExercisePage = ({exercises, setExercises}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const editing = isEditing();
-        console.log(exercises)
-        console.log("HighestId: ", getNewId());
         const exercise = {
             exercise_id: editing ? selectedExercise.exercise_id : getNewId(),
             name,
@@ -147,12 +145,9 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         setWord_pairs([]);
         setSelectedExercise(null);
         if (editing) {
-            console.log("Was editing")
             await updateExercise(exercise)
-            console.log("Updated:", exercise);
         } else {
             await addExercise(exercise);
-            console.log("Added:", exercise);
         }
         setSelectedExercise(exerciseOptions[0]);
     };
@@ -172,7 +167,6 @@ const CreateExercisePage = ({exercises, setExercises}) => {
             setLang2("");
             setWord_pairs([]);
         }
-        console.log('Selected Option:', value);
     };
 
     const AddEditButton = () => {

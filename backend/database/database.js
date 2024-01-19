@@ -111,7 +111,6 @@ const addExercise = ({name, category, lang1, lang2, word_pairs}) => {
                 const exerciseId = result.insertId;
                 const insertQuery = 'INSERT INTO word_pairs (exercise_id, word1, word2) VALUES ?';
                 const wordPairsData = word_pairs.map(pair => [exerciseId, pair.word1, pair.word2]);
-                console.log("PairData: ", wordPairsData)
                 pool.query(insertQuery, [wordPairsData], (err) => err ? reject(err) : resolve(exerciseId));
             }
         });
