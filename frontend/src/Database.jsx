@@ -24,12 +24,13 @@ const removeExercise = async (id) => {
 };
 
 // Update exercise
-const updateExercise = async (id, exercise) => {
+const updateExercise = async (exercise) => {
     try {
-        const resp = await axios.patch(`${url}/${id}`, exercise);
+        console.log("Updating: ", exercise)
+        const resp = await axios.patch(`${url}/${exercise.exercise_id}`, exercise);
         return resp.data;
     } catch (error) {
-        console.error(`Error updating id: ${id}`, error);
+        console.error(`Error updating id: ${exercise.exercise_id}`, error);
     }
 };
 
