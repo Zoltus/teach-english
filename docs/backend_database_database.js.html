@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: backend/database/database.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: backend/database/database.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const mysql = require('mysql');
+const express = require('express');
+const app = express();
+const port = 3000;
+require('dotenv').config();
+
+let server = undefined;
+
+/**
+ * Database connection pool.
+ */
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    connectionLimit: 10,
+});
+
+/**
+ * Start the application. First tests connection then initializes the server.
+ */
+const startApp = () => {
+    //Test connection
+    pool.getConnection((err, con) => {
+        con.release();
+        // mysql connection
+        if (err) {
+            console.error('Error connecting to MySQL:', err);
+            process.exit(1);
+        } else {
+            console.log('MySQL connection successful.');
+            listenApp();
+            //pool.end();
+        }
+    });
+};
+
+/**
+ * Start the server listening port.
+ */
+const listenApp = () => {
+    server = app
+        .listen(port, () => console.log(`Server listening on port ${port}`))
+        .on('error', (err) => {
+            console.error('Error starting server:', err);
+            process.exit(1);
+        });
+};
+
+/**
+ * Gracefully shutdown the server and close the database connection.
+ */
+const gracefulShutdown = async () => {
+    try {
+        console.log('Starting graceful shutdown...');
+        if (server) {
+            console.log('Server was opened, so we can close it...');
+            await server.close();
+            console.log('Server closed.');
+            console.log('Closing MySQL.');
+            await pool.end();
+            console.log('DB connection closed.');
+            process.exit(0);
+        }
+    } catch (err) {
+        console.log('Error closing server/db:', err);
+        process.exit(1);
+    }
+};
+
+process.on('SIGTERM', gracefulShutdown); // Some other app requirest shutdown.
+process.on('SIGINT', gracefulShutdown); // ctrl-c
+
+/**
+ * Get all exercises from the database.
+ *
+ * Finds all exercises and then does another query to wind all words for them
+ * then it strips down duplicate/useless data and makes array from the word_pairs.
+ *
+ * @returns {Promise} Containing all Exercises.
+ */
+const getAllExercises = () => {
+    return new Promise((resolve, reject) => {
+        let selectQuery = `
+            SELECT *
+            FROM exercises
+                     LEFT JOIN word_pairs ON exercises.exercise_id = word_pairs.exercise_id`;
+        pool.query(selectQuery, (err, result) => {
+            if (err) {
+                reject(err)
+            } else {
+                //Map for unique exercises
+                const Exercises = new Map();
+                result.forEach(item => {
+                    const exerciseId = item.exercise_id;
+                    //Add exercicse to map if it doesnt exist yet
+                    if (!Exercises.has(exerciseId)) {
+                        const exercise = {
+                            "exercise_id": exerciseId,
+                            "name": item.name,
+                            "category": item.category,
+                            "lang1": item.lang1,
+                            "lang2": item.lang2,
+                            "word_pairs": []
+                        }
+                        Exercises.set(exerciseId, exercise);
+                    }
+                    //Add words for exercise
+                    const exercise = Exercises.get(exerciseId);
+                    const word = {
+                        "word1": item.word1,
+                        "word2": item.word2,
+                    }
+                    // Push word pair to words array
+                    exercise.word_pairs.push(word)
+                })
+                //Convert Exercises to array
+                resolve(Array.from(Exercises.values()))
+            }
+        });
+    });
+};
+
+/**
+ * Add a new exercise to the database.
+ *
+ * First inserts exercise and if successfull it inserts all words to word_pairs table.
+ *
+ * @param {Object} exerciseData - Destructed data for new exercise.
+ * @returns {Promise&lt;number>} Promise with the newly added id.
+ */
+const addExercise = ({name, category, lang1, lang2, word_pairs}) => {
+    return new Promise((resolve, reject) => {
+        const insertExerciseQuery = 'INSERT INTO exercises (name, category, lang1, lang2) VALUES (?, ?, ?, ?)';
+        pool.query(insertExerciseQuery, [name, category, lang1, lang2], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                const exerciseId = result.insertId;
+                const insertQuery = 'INSERT INTO word_pairs (exercise_id, word1, word2) VALUES ?';
+                const wordPairsData = word_pairs.map(pair => [exerciseId, pair.word1, pair.word2]);
+                pool.query(insertQuery, [wordPairsData], (err) => err ? reject(err) : resolve(exerciseId));
+            }
+        });
+    });
+};
+
+/**
+ * Update an existing exercise in the database.
+ * @param {number} id - of the exercise to update.
+ * @param {Object} exerciseData - New data for the exercise to update destructed.
+ * @returns {Promise&lt;number>} Promise with the id updated.
+ */
+const updateExercise = (id, {name, category, lang1, lang2, word_pairs}) => {
+    return new Promise((resolve, reject) => {
+        const updateQuery = 'UPDATE exercises SET name=?, category=?, lang1=?, lang2=? WHERE exercise_id=?';
+        // Update exercise info
+        pool.query(updateQuery, [name, category, lang1, lang2, id], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                // Delete existing word pairs
+                const deleteQuery = 'DELETE FROM word_pairs WHERE exercise_id=?';
+                pool.query(deleteQuery, [id], (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        // Insert new word pairs for the exercise
+                        const insertQuery = 'INSERT INTO word_pairs (exercise_id, word1, word2) VALUES ?';
+                        const pair_data = word_pairs.map(pair => [id, pair.word1, pair.word2]);
+                        pool.query(insertQuery, [pair_data], (err) => err ? reject(err) : resolve(id));
+                    }
+                });
+            }
+        });
+    });
+};
+
+/**
+ * Deletes an exercise from the database.
+ *
+ * @param {number} id - of the exercise to delete.
+ */
+const deleteExercise = (id) => {
+    return new Promise((resolve, reject) => {
+        const deleteQuery = 'DELETE FROM exercises WHERE exercise_id = ?';
+        pool.query(deleteQuery, [id], (err, result) => err ? reject(err) : resolve());
+    });
+};
+
+module.exports = {app, startApp, getAllExercises, addExercise, deleteExercise, updateExercise};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#CreateExercisePage">CreateExercisePage</a></li><li><a href="global.html#Exercise">Exercise</a></li><li><a href="global.html#ExercisesPage">ExercisesPage</a></li><li><a href="global.html#F1">F1</a></li><li><a href="global.html#LoginPage">LoginPage</a></li><li><a href="global.html#StudyPage">StudyPage</a></li><li><a href="global.html#Vf">Vf</a></li><li><a href="global.html#addExercise">addExercise</a></li><li><a href="global.html#auth">auth</a></li><li><a href="global.html#authenticate">authenticate</a></li><li><a href="global.html#deleteExercise">deleteExercise</a></li><li><a href="global.html#exerciseValidator">exerciseValidator</a></li><li><a href="global.html#getAllExercises">getAllExercises</a></li><li><a href="global.html#gracefulShutdown">gracefulShutdown</a></li><li><a href="global.html#gs">gs</a></li><li><a href="global.html#hs">hs</a></li><li><a href="global.html#isValid">isValid</a></li><li><a href="global.html#kg">kg</a></li><li><a href="global.html#ks">ks</a></li><li><a href="global.html#listenApp">listenApp</a></li><li><a href="global.html#mt">mt</a></li><li><a href="global.html#pool">pool</a></li><li><a href="global.html#startApp">startApp</a></li><li><a href="global.html#updateExercise">updateExercise</a></li><li><a href="global.html#vd">vd</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Jan 19 2024 16:28:43 GMT+0200 (Itä-Euroopan normaaliaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

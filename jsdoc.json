@@ -1,0 +1,16 @@
+{
+  "source": {
+    "include": ["frontend", "backend"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_",
+    "exclude": [
+      "node_modules",
+      "frontend/tailwind.config.js",
+      "frontend/vite.config.js"
+    ]
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./docs"
+  }
+}

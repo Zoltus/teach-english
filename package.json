@@ -8,6 +8,7 @@
     "backend"
   ],
   "scripts": {
+    "generate-docs": "jsdoc -c jsdoc.json",
     "build:frontend": "cd frontend && npm run build",
     "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
     "start-frontend": "npm run dev --workspace=frontend",
@@ -17,7 +18,8 @@
     "axios": "^1.6.2"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "jsdoc": "^4.0.2"
   },
   "keywords": [],
   "author": "",
