@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {Autocomplete, Button, FormControl, TextField} from "@mui/material";
 import Database from "../Database.jsx";
-import exercise from "../components/Exercise.jsx";
 
 /**
  * CreateExercisePage provides ability to create, edit, and delete exercises.
@@ -55,11 +54,19 @@ const CreateExercisePage = ({exercises, setExercises}) => {
 
     /**
      * Updates an existing exercise.
-     * @param {Object} exercise - to be updated.
+     * @param {Object} updatedExercise - to be updated.
      */
-    const updateExercise = async (exercise) => {
+    const updateExercise = async (updatedExercise) => {
         if (selectedExercise) {
-            await Database.updateExercise(exercise);
+            await Database.updateExercise(updatedExercise);
+            setExercises((prevExercises) => {
+                return prevExercises.map((orgExercise) => {
+                    if (orgExercise.exercise_id === updatedExercise.exercise_id) {
+                        return updatedExercise;
+                    }
+                    return orgExercise;
+                });
+            });
         }
     };
 
