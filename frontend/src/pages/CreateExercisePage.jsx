@@ -203,7 +203,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
                     }
                     getOptionLabel={(option) => option.label}
                     renderInput={(params) =>
-                        <TextField className="bg-perfect-gray" {...params} label="Movie"/>}
+                        <TextField className="bg-perfect-gray" {...params} label="Select to edit or Add new!"/>}
                 />
                 <div className="">
                     <TextField
