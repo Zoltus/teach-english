@@ -7,8 +7,8 @@
     "dev": "concurrently \"npm run dev:app\" \"npm run dev:tailwind\"",
     "dev:app": "vite",
     "build": "vite build & npm run tailwind",
-    "tailwind": "tailwindcss -i src/App.css -o ./dist/App.css",
-    "dev:tailwind": "tailwindcss -i src/App.css -o ./dist/App.css --watch",
+    "tailwind": "tailwindcss -i src/App.css -o dist/App.css",
+    "dev:tailwind": "tailwindcss -i src/App.css -o dist/App.css --watch",
     "preview": "vite preview"
   },
   "dependencies": {
