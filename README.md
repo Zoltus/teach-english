@@ -38,6 +38,10 @@ AMAZING BEHIND THE SCENES VIDEO!
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/qYBeKNn62JE/0.jpg)](https://www.youtube.com/watch?v=qYBeKNn62JE)
 
+Urlbackup:
+
+https://www.youtube.com/watch?v=qYBeKNn62JE
+
 Exercises list
 ![Alt Text](https://i.imgur.com/K0U3jW8.png)
 
