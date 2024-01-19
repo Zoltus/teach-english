@@ -11,9 +11,11 @@ import {Drawer, Link} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import Database from "./Database.jsx";
 import SchoolIcon from '@mui/icons-material/School';
+import StudyPage from "./pages/StudyPage.jsx";
 
 function App() {
     const [exercises, setExercises] = useState([]);
+    const [currentExercise, setCurrentExercise] = useState();
 
     const addExercise = async (exercise) => {
         setExercises([...exercises, exercise]);
@@ -40,8 +42,8 @@ function App() {
                         '& .MuiDrawer-paper': {width: 240},
                     }}>
                     <List>
-                        {[{text: 'Exercises', path: '/'},
-                            {text: 'Add Exercise', path: '/CreateExercicePage'},
+                        {[{text: 'Exercises', path: 'a'},
+                            {text: 'Add Exercise', path: '/CreateExercisePage'},
                         ].map((item, index) => (
                             <ListItem key={item.text} disablePadding>
                                 <ListItemButton component={Link} to={item.path}>
@@ -58,9 +60,9 @@ function App() {
                     <div className="flex h-screen">
                         <main className="flex-1 p-4">
                             <Routes>
-                                <Route path="/" element={<ExercisesPage exercises={exercises}/>}/>
-                                <Route path="/CreateExercicePage"
-                                       element={<CreateExercicePage addExercise={addExercise}/>}/>
+                                <Route path="/" element={<ExercisesPage exercises={exercises} setCurrentExercise={setCurrentExercise}/>}/>
+                                <Route path="/CreateExercisePage" element={<CreateExercisePage addExercise={addExercise}/>}/>
+                                <Route path="/StudyPage" element={<StudyPage currentExercise={currentExercise} setCurrentExercise={setCurrentExercise}/>} />
                             </Routes>
                         </main>
                     </div>
