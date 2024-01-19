@@ -197,6 +197,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
                     value={selectedExercise}
                     options={exerciseOptions}
                     onChange={handleAutocompleteChange}
+                    getOptionKey={(option) => option.exercise_id}
                     isOptionEqualToValue={
                         (option, value) => option.exercise_id === value.exercise_id
                     }
