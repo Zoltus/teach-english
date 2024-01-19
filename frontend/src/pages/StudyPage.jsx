@@ -41,7 +41,7 @@ const StudyPage = ({currentExercise, setCurrentExercise}) => {
         const calcCorrectAnswers = answers.filter((answer, index) => {
             const pair = currentExercise.word_pairs[index];
             const word = currentExercise.swapLang ? pair.word2 : pair.word1;
-            return answer.toLowerCase() === word.toLowerCase();
+            return word && answer && answer.toLowerCase() === word.toLowerCase();
         }).length;
         setCorrectAnswers(calcCorrectAnswers);
         setOpenModal(true);
