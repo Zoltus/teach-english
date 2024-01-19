@@ -13,7 +13,7 @@ const ExercisesPage = ({ exercises, setCurrentExercise }) => {
     return (
         <div className="flex flex-col items-center h-full page">
             <div className="w-full max-w-screen-lg p-4">
-                <h1 className="text-center mb-6">Exercises</h1>
+                <h1 className="text-center text-gray-500 mb-6">Exercises</h1>
                 <div className="flex flex-row flex-wrap">
                     {filteredExercises()}
                 </div>
