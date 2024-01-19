@@ -146,6 +146,8 @@ dist-ssr
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-
+./frontend/docs
+./backend/docs
+./docs
 .idea/
 /backend/test.http
