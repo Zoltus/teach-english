@@ -29,6 +29,23 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         }
     };
 
+    const deleteExercise = async () => {
+        const selectedID = selectedExercise.exercise_id;
+        if (selectedExercise) {
+            //reset fields
+            setName('');
+            setCategory('');
+            setLang1('');
+            setLang2('');
+            setWord_pairs([]);
+            await Database.deleteExercise(selectedID);
+            setExercises((prevExercises) =>
+                prevExercises.filter((exercise) => exercise.exercise_id !== selectedID)
+            );
+            setSelectedExercise(exerciseOptions[0]);
+        }
+    };
+
     const actionButton = (index) => {
         const isLastButton = index === word_pairs.length - 1;
         const colors = isLastButton ? "text-green-500 border-green-500" : "text-red-500 border-red-500";
@@ -129,15 +146,6 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         }
 
     };
-    //Empty option so you can add new if u select this:
-    const exerciseOptions = [
-        {label: 'ADD NEW', exercise_id: -1, data: null}, // Add the "None" option
-        ...exercises.map(exercise => ({
-            label: exercise.name,
-            exercise_id: exercise.exercise_id,
-            data: exercise
-        })),
-    ];
 
     const handleAutocompleteChange = (event, value) => {
         setSelectedExercise(value);
@@ -232,7 +240,8 @@ const CreateExercisePage = ({exercises, setExercises}) => {
                 {isEditing() && (
                     <Button className="mt-4 text-red-500 border-red-500"
                             variant="outlined"
-                            type="submit">
+                            onClick={deleteExercise}
+                    >
                         Delete Exercise
                     </Button>
                 )}

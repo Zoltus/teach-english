@@ -34,6 +34,17 @@ const updateExercise = async (exercise) => {
     }
 };
 
+// Delete exercise
+const deleteExercise = async (id) => {
+    try {
+        console.log("Deleting: ", id)
+        const resp = await axios.delete(`${url}/${id}`);
+        return resp.data;
+    } catch (error) {
+        console.error(`Error Deleting id: ${id}`, error);
+    }
+};
+
 //Fetches all Exercises from db
 const getAllExercises = async () => {
     try {
@@ -44,4 +55,4 @@ const getAllExercises = async () => {
     }
 }
 
-export default {addExercise, getAllExercises, removeExercise, updateExercise };
+export default {addExercise, getAllExercises, removeExercise, updateExercise, deleteExercise };
