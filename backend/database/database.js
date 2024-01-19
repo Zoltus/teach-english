@@ -62,21 +62,19 @@ process.on('SIGINT', gracefulShutdown); // ctrl-c
 
 const getAllExercises = () => {
     return new Promise((resolve, reject) => {
-        console.log("asd2")
         let query = `
             SELECT *
             FROM exercises
                      LEFT JOIN word_pairs ON exercises.exercise_id = word_pairs.exercise_id`;
-        console.log("Finding word_pairs where exervie id")
         pool.query(query, (err, result) => {
             if (err) {
                 reject(err)
             } else {
-                const exercices = new Map();
+                const Exercises = new Map();
                 result.forEach(item => {
                     const exerciseId = item.exercise_id;
                     //Add exercicse to map if it doesnt exist yet
-                    if (!exercices.has(exerciseId)) {
+                    if (!Exercises.has(exerciseId)) {
                         const exercise = {
                             "exercise_id": exerciseId,
                             "name": item.name,
@@ -85,10 +83,10 @@ const getAllExercises = () => {
                             "lang2": item.lang2,
                             "word_pairs": []
                         }
-                        exercices.set(exerciseId, exercise);
+                        Exercises.set(exerciseId, exercise);
                     }
                     //Add words for exercise
-                    const exercise = exercices.get(exerciseId);
+                    const exercise = Exercises.get(exerciseId);
                     const word = {
                         "word1": item.word1,
                         "word2": item.word2,
@@ -96,8 +94,8 @@ const getAllExercises = () => {
                     // Push word pair to words array
                     exercise.word_pairs.push(word)
                 })
-                //Convert exercices to array
-                resolve(Array.from(exercices.values()))
+                //Convert Exercises to array
+                resolve(Array.from(Exercises.values()))
             }
         });
     });

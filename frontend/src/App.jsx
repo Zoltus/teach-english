@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import ExercisesPage from "./pages/ExercisesPage.jsx";
-import CreateExercicePage from "./pages/CreateExercicePage.jsx";
+import CreateExercisePage from "./pages/CreateExercisePage.jsx";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -19,13 +19,13 @@ function App() {
 
     const addExercise = async (exercise) => {
         setExercises([...exercises, exercise]);
-        await Database.addExercice(exercise);
+        await Database.addExercise(exercise);
     };
 
     // Fetch data on mount
     useEffect(() => {
         (async () => {
-            const fetched = await Database.getAllExercices();
+            const fetched = await Database.getAllExercises();
             setExercises(fetched);
         })();
     }, []);

@@ -60,11 +60,11 @@ const addExercise = async (req, res) => {
     }
 };
 
-// Get all exercices
+// Get all Exercises
 router.get('/', getAllExercises);
-// Delete exercice by id
+// Delete Exercise by id
 router.delete('/:myId', deleteExercise);
-// Add new exercice
+// Add new Exercise
 router.post('/', exerciseValidator, addExercise);
 
 module.exports = router;

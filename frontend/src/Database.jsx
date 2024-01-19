@@ -3,10 +3,10 @@ import axios from "axios";
 const url = `${import.meta.env.VITE_API_URL}/api/exercises`;
 
 //Adds exercise to db
-const addExercice = async (exercice) => {
+const addExercise = async (Exercise) => {
     try {
-        console.log("Trying to adda: ", exercice)
-        const resp = await axios.post(url, exercice);
+        console.log("Trying to adda: ", Exercise)
+        const resp = await axios.post(url, Exercise);
         return resp.data;
     } catch (error) {
         console.error('Error adding task: ', error);
@@ -23,8 +23,8 @@ const removeExercise = async (id) => {
     }
 };
 
-//Fetches all exercices from db
-const getAllExercices = async () => {
+//Fetches all Exercises from db
+const getAllExercises = async () => {
     try {
         const response = await axios.get(url);
         return response.data;
@@ -33,4 +33,4 @@ const getAllExercices = async () => {
     }
 }
 
-export default {addExercice, getAllExercices, removeExercise };
+export default {addExercise, getAllExercises, removeExercise };

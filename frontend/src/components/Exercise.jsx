@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Button, Card, CardContent, Typography} from "@mui/material";
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
-function Exercise({exercise}) {
+function Exercise({exercise, setCurrentExercise}) {
     const [swapLang, setSwapLang] = useState(true);
 
     const swapLanguage = () => setSwapLang(!swapLang);;

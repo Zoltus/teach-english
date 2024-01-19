@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Button, FormControl, TextField} from "@mui/material";
 
-const CreateExercicePage = ({ addExercise }) => {
+const CreateExercisePage = ({addExercise}) => {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [lang1, setLang1] = useState('');
@@ -154,4 +154,4 @@ const CreateExercicePage = ({ addExercise }) => {
     </div>
 }
 
-export default CreateExercicePage
+export default CreateExercisePage
