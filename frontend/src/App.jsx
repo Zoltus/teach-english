@@ -15,12 +15,20 @@ import StudyPage from "./pages/StudyPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import LoginIcon from '@mui/icons-material/Login';
 
+/**
+ * App is base of the application.
+ * It setups navigation, routing and manages application states
+ *
+ * @component
+ */
 function App() {
     const [exercises, setExercises] = useState([]);
     const [currentExercise, setCurrentExercise] = useState();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // Fetch data on mount
+    /**
+     * OnMount fetches all exercises.
+     */
     useEffect(() => {
         (async () => {
             const fetched = await Database.getAllExercises();

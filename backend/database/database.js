@@ -125,7 +125,7 @@ const getAllExercises = () => {
 /**
  * Add a new exercise to the database.
  *
- * First incerts exercise and if successfull it inserts all words to word_pairs table.
+ * First inserts exercise and if successfull it inserts all words to word_pairs table.
  *
  * @param {Object} exerciseData - Destructed data for new exercise.
  * @returns {Promise<number>} Promise with the newly added id.

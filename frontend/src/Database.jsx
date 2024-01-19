@@ -2,7 +2,14 @@ import axios from "axios";
 
 const url = `${import.meta.env.VITE_API_URL}/api/exercises`;
 
-//Adds exercise to db
+/**
+ * Add a new exercise to the database.
+ *
+ * Sends request to add Exercise.
+ *
+ * @param {Object} Exercise - Destructed data for new exercise.
+ * @returns {Promise<number>} Newly added id.
+ */
 const addExercise = async (Exercise) => {
     try {
         const resp = await axios.post(url, Exercise);
@@ -12,17 +19,14 @@ const addExercise = async (Exercise) => {
     }
 };
 
-//Removes exercise from db
-const removeExercise = async (id) => {
-    try {
-        const resp = await axios.delete(`${url}/${id}`);
-        return resp.data;
-    } catch (error) {
-        console.error(`Error removing id: ${id}`, error);
-    }
-};
 
-// Update exercise
+
+/**
+ * Update an existing exercise.
+ *
+ * @param {Object} exercise - Execise containing id and data to update.
+ * @returns {Promise<number>} Promise with the id updated.
+ */
 const updateExercise = async (exercise) => {
     try {
         const resp = await axios.patch(`${url}/${exercise.exercise_id}`, exercise);
@@ -32,7 +36,11 @@ const updateExercise = async (exercise) => {
     }
 };
 
-// Delete exercise
+/**
+ * Deletes an exercise based on the id
+ *
+ * @param {number} id - of the exercise to delete.
+ */
 const deleteExercise = async (id) => {
     try {
         const resp = await axios.delete(`${url}/${id}`);
@@ -42,7 +50,14 @@ const deleteExercise = async (id) => {
     }
 };
 
-//Fetches all Exercises from db
+
+/**
+ * Get all exercises from the backend
+ *
+ * Finds all exercises
+ *
+ * @returns {Promise} Containing all Exercises.
+ */
 const getAllExercises = async () => {
     try {
         const response = await axios.get(url);
@@ -52,7 +67,12 @@ const getAllExercises = async () => {
     }
 }
 
-//Authenticate
+/**
+ * Authenticates a user.
+ * Sends request to backend and gives response true or false if user has right credentials.
+ *
+ * @param {Object} credentials - Credentials for user.
+ */
 const auth = async (credentials) => {
     try {
         const resp = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth`, credentials);
@@ -62,4 +82,4 @@ const auth = async (credentials) => {
     }
 };
 
-export default {addExercise, getAllExercises, removeExercise, updateExercise, deleteExercise, auth };
+export default {addExercise, getAllExercises, updateExercise, deleteExercise, auth };

@@ -3,6 +3,15 @@ import {Autocomplete, Button, FormControl, TextField} from "@mui/material";
 import Database from "../Database.jsx";
 import exercise from "../components/Exercise.jsx";
 
+/**
+ * CreateExercisePage provides ability to create, edit, and delete exercises.
+ * User can define exercise name, category, language and word prais.
+ *
+ * @prop {Array} exercises - An array of all exercises
+ * @prop {Function} setExercises - Function to update the list of exercises.
+ *
+ * @component
+ */
 const CreateExercisePage = ({exercises, setExercises}) => {
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
@@ -11,10 +20,17 @@ const CreateExercisePage = ({exercises, setExercises}) => {
     const [word_pairs, setWord_pairs] = useState([]);
     const [selectedExercise, setSelectedExercise] = useState(null);
 
+    /**
+     * Checks if user is editing execises and changes the visuals based on that
+     * @returns {boolean} true if user is editing exercise
+     */
     const isEditing = () => selectedExercise != null
         && selectedExercise.exercise_id !== null && selectedExercise.exercise_id !== -1;
 
-    //Get new highest id for new exercises
+    /**
+     * Gets the next available exercise ID.
+     * @returns {number} A new id for exercise
+     */
     const getNewId = () => exercises.reduce((maxId, exercise) =>
         exercise.exercise_id > maxId ? exercise.exercise_id : maxId, 0) + 1;
 
@@ -28,17 +44,28 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         })),
     ];
 
+    /**
+     * Adds a new exercise.
+     * @param {Object} exercise - object to be added.
+     */
     const addExercise = async (exercise) => {
         setExercises((prevExercises) => [...prevExercises, exercise]);
         await Database.addExercise(exercise);
     };
 
+    /**
+     * Updates an existing exercise.
+     * @param {Object} exercise - to be updated.
+     */
     const updateExercise = async (exercise) => {
         if (selectedExercise) {
             await Database.updateExercise(exercise);
         }
     };
 
+    /**
+     * Deletes selected exercise and reset fields.
+     */
     const deleteExercise = async () => {
         const selectedID = selectedExercise.exercise_id;
         if (selectedExercise) {
@@ -56,11 +83,20 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         }
     };
 
+    /**
+     * Actionbutton for words, its either add or remove based on if its the last entry on the list.
+     *
+     * @param {number} index - of the button
+     * @returns {JSX.Element} A button.
+     */
     const actionButton = (index) => {
         const isLastButton = index === word_pairs.length - 1;
         const colors = isLastButton ? "text-green-500 border-green-500" : "text-red-500 border-red-500";
         const text = isLastButton ? "+ Add" : "- Remove";
 
+        /**
+         * Handles action button click, either remove or add word pair slot
+         */
         const handleActionClick = () => {
             if (isLastButton) {
                 // Add a new wordPair
@@ -81,6 +117,11 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         );
     };
 
+    /**
+     * Handles all word rendering
+     *
+     * @returns {JSX.Element} Element with list of all wordpairs with buttons.
+     */
     const addWords = () => {
         //If wordpairs is empty it adds 1
         if (word_pairs.length === 0) {
@@ -126,6 +167,12 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         );
     }
 
+    /**
+     * Handles data sumbitting.
+     * Creates exercise from new id {getNewId} and data from the fields.
+     *
+     * @param {Event} e - Event object.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         const editing = isEditing();
@@ -143,15 +190,22 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         setLang1('');
         setLang2('');
         setWord_pairs([]);
-        setSelectedExercise(null);
+        setSelectedExercise(exerciseOptions[0]);
         if (editing) {
             await updateExercise(exercise)
         } else {
             await addExercise(exercise);
         }
-        setSelectedExercise(exerciseOptions[0]);
     };
 
+    /**
+     * Handles changes in the exercise selection.
+     * User can either Add new or edit/delete old exercises.
+     * Fills all fields if user selects exercise.
+     *
+     * @param {Event} event - Event object.
+     * @param {Object} value - Values of the selected entry.
+     */
     const handleAutocompleteChange = (event, value) => {
         setSelectedExercise(value);
         if (value && value.exercise_id !== -1) {
@@ -169,6 +223,11 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         }
     };
 
+    /**
+     * Renders the add or edit button based on if user is editing exercise or not.
+     *
+     * @returns {JSX.Element} A Button.
+     */
     const AddEditButton = () => {
         const text = isEditing() ? "Update Exercise" : "Add Exercise";
         return (
@@ -179,7 +238,6 @@ const CreateExercisePage = ({exercises, setExercises}) => {
             </Button>
         )
     }
-
     return (
         <div>
             <h1 className="text-gray-500">Create exercise</h1>

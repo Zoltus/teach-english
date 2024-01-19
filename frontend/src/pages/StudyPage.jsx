@@ -2,12 +2,29 @@ import React, {useEffect, useState} from "react";
 import {Button, TextField, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
+
+/**
+ * StudyPage is component for players to answer questions
+ * Before the test user could swap the language.
+ * Upon completing the test user gets a score.
+ *
+ * @prop {Object} currentExercise - Exercise currently played.
+ * @prop {Function} setCurrentExercise - Function to update the current exercise.
+ *
+ * @component
+ */
 const StudyPage = ({currentExercise, setCurrentExercise}) => {
     const navigate = useNavigate();
     const [answers, setAnswers] = useState([]);
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [openModal, setOpenModal] = useState(false);
 
+    /**
+     * Handles input change for each answer field.
+     *
+     * @param {number} index - Index of the word_pair
+     * @param {string} value - Translation of the word.
+     */
     const handleInputChange = (index, value) => {
         setAnswers(prevAnswers => {
             const copied = [...prevAnswers];
@@ -16,8 +33,11 @@ const StudyPage = ({currentExercise, setCurrentExercise}) => {
         });
     };
 
+    /**
+     * Handles the answer submitting
+     * Calculates score based on correct answers
+     */
     const handleSubmit = () => {
-        // calc correct answers
         const calcCorrectAnswers = answers.filter((answer, index) => {
             const pair = currentExercise.word_pairs[index];
             const word = currentExercise.swapLang ? pair.word2 : pair.word1;
@@ -27,11 +47,13 @@ const StudyPage = ({currentExercise, setCurrentExercise}) => {
         setOpenModal(true);
     };
 
+    /**
+     * Closes the score modal/popup and navigates back to the main page.
+     */
     const handleCloseModal = () => {
         setOpenModal(false);
         navigate("/");
     };
-
     useEffect(() => {
         // If currentExercise is not set, navigate back
         if (currentExercise === undefined || currentExercise === null) {
@@ -43,7 +65,9 @@ const StudyPage = ({currentExercise, setCurrentExercise}) => {
     if (!currentExercise) {
         return null;
     }
-
+    /**
+     * Creates wordpairs from current exercise words.
+     */
     const words = () => currentExercise.word_pairs.map((pair, index) => {
         return (
             <div key={index} className="flex items-center mb-4">
