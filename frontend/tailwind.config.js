@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{html,jsx}"],
-  important: '#root',
+  content: ["./src/**/*.{html,js,jsx}"],
+  important: true,
   theme: {
     extend: {
       backgroundColor: {
@@ -12,7 +12,10 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
   corePlugins: {
     preflight: false,
   },
