@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button } from '@mui/material';
+import {TextField, Button, Snackbar} from '@mui/material';
 import Database from "../Database.jsx";
 
 /**
@@ -15,8 +15,10 @@ const LoginPage = ({setIsAuthenticated}) => {
     /**
      * Stores login information.
      */
-    const [name, setName] = useState('');
-    const [password, setPassword] = useState('');
+    const [name, setName] = useState("");
+    const [password, setPassword] = useState("");
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
 
     /**
      * Handles form submission for login.
@@ -26,12 +28,17 @@ const LoginPage = ({setIsAuthenticated}) => {
      */
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const result = await Database.auth({ name, password })
+        const result = await Database.auth({ name, password });
         const login = result.login;
         if (login) {
             setIsAuthenticated(login);
+            setSnackbarMessage('Login successful!');
+            setOpenSnackbar(true);
+            setName("");
+            setPassword("");
         } else {
-            //Wrong pass or sthing
+            setSnackbarMessage('Incorrect username or password!');
+            setOpenSnackbar(true);
         }
     };
     return (
@@ -70,8 +77,14 @@ const LoginPage = ({setIsAuthenticated}) => {
                     Login
                 </Button>
             </form>
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                open={openSnackbar}
+                autoHideDuration={4000}
+                onClose={() => setOpenSnackbar(false)}
+                message={snackbarMessage}
+            />
         </div>
     );
 };
-
 export default LoginPage;
