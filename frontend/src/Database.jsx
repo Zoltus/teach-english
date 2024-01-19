@@ -55,4 +55,16 @@ const getAllExercises = async () => {
     }
 }
 
-export default {addExercise, getAllExercises, removeExercise, updateExercise, deleteExercise };
+//Authenticate
+const auth = async (credentials) => {
+    try {
+        console.log("authax", credentials)
+        const resp = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth`, credentials);
+        console.log("resp", resp.data)
+        return resp.data;
+    } catch (error) {
+        console.error('Error adding task: ', error);
+    }
+};
+
+export default {addExercise, getAllExercises, removeExercise, updateExercise, deleteExercise, auth };
