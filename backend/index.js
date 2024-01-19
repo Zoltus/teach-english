@@ -7,5 +7,5 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/exercises', exercisesRoute);
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + '/../frontend/dist'));
+app.use(express.static(__dirname + '/frontend/dist'));
 startApp();
