@@ -23,6 +23,16 @@ const removeExercise = async (id) => {
     }
 };
 
+// Update exercise
+const updateExercise = async (id, exercise) => {
+    try {
+        const resp = await axios.patch(`${url}/${id}`, exercise);
+        return resp.data;
+    } catch (error) {
+        console.error(`Error updating id: ${id}`, error);
+    }
+};
+
 //Fetches all Exercises from db
 const getAllExercises = async () => {
     try {
@@ -33,4 +43,4 @@ const getAllExercises = async () => {
     }
 }
 
-export default {addExercise, getAllExercises, removeExercise };
+export default {addExercise, getAllExercises, removeExercise, updateExercise };
