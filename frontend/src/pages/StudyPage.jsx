@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Modal, TextField, Typography} from "@mui/material";
+import {Button, TextField, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
 const StudyPage = ({currentExercise, setCurrentExercise}) => {
@@ -19,10 +19,11 @@ const StudyPage = ({currentExercise, setCurrentExercise}) => {
     const handleSubmit = () => {
         // calc correct answers
         const calcCorrectAnswers = answers.filter((answer, index) => {
-            return answer.toLowerCase() === currentExercise.word_pairs[index].word2.toLowerCase();
+            const pair = currentExercise.word_pairs[index];
+            const word = currentExercise.swapLang ? pair.word2 : pair.word1;
+            return answer.toLowerCase() === word.toLowerCase();
         }).length;
         setCorrectAnswers(calcCorrectAnswers);
-        setCurrentExercise(null);
         setOpenModal(true);
     };
 
@@ -46,7 +47,7 @@ const StudyPage = ({currentExercise, setCurrentExercise}) => {
     const words = () => currentExercise.word_pairs.map((pair, index) => {
         return (
             <div key={index} className="flex items-center mb-4">
-                <Typography variant="h6">{pair.word1} =</Typography>
+                <Typography variant="h6">{currentExercise.swapLang ? pair.word1 : pair.word2} =</Typography>
                 <TextField
                     variant="outlined"
                     label="Translation"

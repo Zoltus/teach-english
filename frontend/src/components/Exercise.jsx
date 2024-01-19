@@ -9,6 +9,8 @@ function Exercise({exercise, setCurrentExercise}) {
 
     const swapLanguage = () => setSwapLang(!swapLang);
     const study = () => {
+        //Set swapLang to exercise so we know if we should swap languages.
+        exercise.swapLang = swapLang;
         setCurrentExercise(exercise);
         navigate("/StudyPage");
         console.log("Studying ", exercise)
