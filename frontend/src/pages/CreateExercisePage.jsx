@@ -17,6 +17,16 @@ const CreateExercisePage = ({exercises, setExercises}) => {
     const getNewId = () => exercises.reduce((maxId, exercise) =>
         exercise.exercise_id > maxId ? exercise.exercise_id : maxId, 0) + 1;
 
+    //Empty option so you can add new if u select this:
+    const exerciseOptions = [
+        {exercise_id: -1, label: 'ADD NEW', data: null}, // Add the "None" option
+        ...exercises.map(exercise => ({
+            exercise_id: exercise.exercise_id,
+            label: exercise.name,
+            data: exercise
+        })),
+    ];
+
     const addExercise = async (exercise) => {
         setExercises((prevExercises) => [...prevExercises, exercise]);
         await Database.addExercise(exercise);
@@ -135,7 +145,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
         setLang1('');
         setLang2('');
         setWord_pairs([]);
-
+        setSelectedExercise(null);
         if (editing) {
             console.log("Was editing")
             await updateExercise(exercise)
@@ -144,7 +154,7 @@ const CreateExercisePage = ({exercises, setExercises}) => {
             await addExercise(exercise);
             console.log("Added:", exercise);
         }
-
+        setSelectedExercise(exerciseOptions[0]);
     };
 
     const handleAutocompleteChange = (event, value) => {
@@ -182,7 +192,9 @@ const CreateExercisePage = ({exercises, setExercises}) => {
             <FormControl component="form" onSubmit={handleSubmit}>
                 <Autocomplete
                     disablePortal
-                    id="combo-box-demo"
+                    freeSolo
+                    id="suggestions"
+                    value={selectedExercise}
                     options={exerciseOptions}
                     onChange={handleAutocompleteChange}
                     isOptionEqualToValue={
