@@ -5,7 +5,13 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 function Exercise({exercise, setCurrentExercise}) {
     const [swapLang, setSwapLang] = useState(true);
 
-    const swapLanguage = () => setSwapLang(!swapLang);;
+    const swapLanguage = () => setSwapLang(!swapLang);
+    const study = () => {
+        setCurrentExercise(exercise);
+        navigate("/StudyPage");
+        console.log("Studying ", exercise)
+    };
+
     return (
         <Card className="m-4">
             <CardContent>
@@ -28,7 +34,8 @@ function Exercise({exercise, setCurrentExercise}) {
                 </div>
                 <Button
                     variant="outlined"
-                    className="mt-5 text-gray-500 border-gray-500 text-xs">
+                    className="mt-5 text-gray-500 border-gray-500 text-xs"
+                    onClick={study}>
                     Study
                 </Button>
             </CardContent>
