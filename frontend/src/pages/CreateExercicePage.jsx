@@ -98,60 +98,61 @@ const CreateExercisePage = ({addExercise}) => {
         console.log("Submitted:", exercise);
     };
 
-    return <div className={"page"}>
-        <h1>Create exercise</h1>
-        <FormControl component="form" onSubmit={handleSubmit}>
-            <div className="">
-                <TextField
-                    required
-                    id="name"
-                    label="Name"
-                    variant="filled"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    fullWidth
-                />
-                <TextField
-                    id="category"
-                    label="Category"
-                    variant="filled"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    fullWidth
-                />
-            </div>
-            <div className="flex mt-6 space-x-4">
-                <TextField
-                    required
-                    id="lang1"
-                    label="lang1"
-                    variant="filled"
-                    value={lang1}
-                    onChange={(e) => setLang1(e.target.value)}
-                    fullWidth
-                />
-                <TextField
-                    required
-                    id="lang2"
-                    label="lang2"
-                    variant="filled"
-                    value={lang2}
-                    onChange={(e) => setLang2(e.target.value)}
-                    fullWidth
-                />
-            </div>
-            <div className="mt-4">
-                {addWords()}
-            </div>
-            <Button className="mt-4 text-gray-500 border-gray-500"
-                    variant="outlined"
-                    type="submit"
-            >
-                Create Exercise
-            </Button>
-        </FormControl>
-
-    </div>
+    return (
+        <div>
+            <h1>Create exercise</h1>
+            <FormControl component="form" onSubmit={handleSubmit}>
+                <div className="">
+                    <TextField
+                        required
+                        id="name"
+                        label="Name"
+                        variant="filled"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        id="category"
+                        label="Category"
+                        variant="filled"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        fullWidth
+                    />
+                </div>
+                <div className="flex mt-6 space-x-4">
+                    <TextField
+                        required
+                        id="lang1"
+                        label="lang1"
+                        variant="filled"
+                        value={lang1}
+                        onChange={(e) => setLang1(e.target.value)}
+                        fullWidth
+                    />
+                    <TextField
+                        required
+                        id="lang2"
+                        label="lang2"
+                        variant="filled"
+                        value={lang2}
+                        onChange={(e) => setLang2(e.target.value)}
+                        fullWidth
+                    />
+                </div>
+                <div className="mt-4">
+                    {addWords()}
+                </div>
+                <Button className="mt-4 text-gray-500 border-gray-500"
+                        variant="outlined"
+                        type="submit"
+                >
+                    Create Exercise
+                </Button>
+            </FormControl>
+        </div>
+    )
 }
 
 export default CreateExercisePage
