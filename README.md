@@ -25,6 +25,7 @@ Url: https://teact-english.onrender.com/
 - ![Express](https://img.shields.io/badge/Express-green)
 - ![Node.js](https://img.shields.io/badge/Node.js-green)
 - ![MySQL](https://img.shields.io/badge/MySQL-lightgrey)
+- ![Docker](https://img.shields.io/badge/Docker-lightgrey)
 
 ## About The Project
 
@@ -80,6 +81,16 @@ Usage is very simple just go to root folder of the project and run
    ```
 To start the website and start learning!
 
+## Docker
+
+You can also use docker with
+   ```sh
+    docker-compose build
+   ```
+And to run
+   ```sh
+    docker-compose up
+   ```
 
 ## Docs
 
